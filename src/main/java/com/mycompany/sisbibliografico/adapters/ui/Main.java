@@ -2,11 +2,14 @@ package com.mycompany.sisbibliografico.adapters.ui;
 
 import com.mycompany.sisbibliografico.application.service.ArticuloService;
 import com.mycompany.sisbibliografico.application.service.AutorService;
+import com.mycompany.sisbibliografico.application.service.InformeTecnicoService;
 import com.mycompany.sisbibliografico.application.usecase.ArticuloServiceImpl;
 import com.mycompany.sisbibliografico.application.usecase.AutorServiceImpl;
+import com.mycompany.sisbibliografico.application.usecase.InformeTecnicoServiceImpl;
 import com.mycompany.sisbibliografico.domain.repository.ArticuloRepository;
 import com.mycompany.sisbibliografico.infrastructure.postgresql.ArticuloRepositoryPostgres;
 import com.mycompany.sisbibliografico.infrastructure.postgresql.AutorRepositoryPostgres;
+import com.mycompany.sisbibliografico.infrastructure.postgresql.InformeTecnicoRepositoryPostgres;
 
 import javax.swing.*;
 import java.awt.*; 
@@ -35,29 +38,37 @@ public class Main extends JFrame {
         menu.setPreferredSize(new Dimension(200, getHeight()));
 
         JButton btnArticulos = crearBotonMenu("Artículos");
+        JButton btnAutores = crearBotonMenu("Autores");
+        JButton btnInformes = crearBotonMenu("Informes");
         JButton btnSalir = crearBotonMenu("Salir");
-        JButton btnAutores = crearBotonMenu("Autores");      
 
         btnArticulos.addActionListener(e -> layout.show(contentPanel, "articulos"));
-        btnSalir.addActionListener(e -> System.exit(0));
         btnAutores.addActionListener(e -> layout.show(contentPanel, "autores"));
+        btnInformes.addActionListener(e -> layout.show(contentPanel, "informes"));
+        btnSalir.addActionListener(e -> System.exit(0));
 
         menu.add(Box.createVerticalStrut(30));
         menu.add(btnArticulos);
         menu.add(Box.createVerticalStrut(10));
         menu.add(btnAutores);
+        menu.add(Box.createVerticalStrut(10));
+        menu.add(btnInformes);
         menu.add(Box.createVerticalGlue());
         menu.add(btnSalir);
         
         ArticuloRepository articuloRepo = new ArticuloRepositoryPostgres();
         AutorRepositoryPostgres autorRepo = new AutorRepositoryPostgres();
+        InformeTecnicoRepositoryPostgres informeRepo = new InformeTecnicoRepositoryPostgres();
         ArticuloService articuloService = new ArticuloServiceImpl(articuloRepo);
         AutorService autorService = new AutorServiceImpl(autorRepo);
+        InformeTecnicoService informeService = new InformeTecnicoServiceImpl(informeRepo);
 
         ArticuloForm articuloForm = new ArticuloForm(articuloService, layout, contentPanel);
         AutorForm autorForm = new AutorForm(autorService, layout, contentPanel);
+        InformeTecnicoForm informeForm = new InformeTecnicoForm(informeService, layout, contentPanel);
         contentPanel.add(articuloForm, "articulos");
         contentPanel.add(autorForm, "autores");
+        contentPanel.add(informeForm, "informes");
 
         add(menu, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
@@ -80,5 +91,5 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::new);
     }
-}
+} 
 
