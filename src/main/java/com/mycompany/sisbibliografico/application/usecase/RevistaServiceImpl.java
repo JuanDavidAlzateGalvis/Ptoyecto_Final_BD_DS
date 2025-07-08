@@ -3,8 +3,7 @@ package com.mycompany.sisbibliografico.application.usecase;
 import com.mycompany.sisbibliografico.application.service.RevistaService;
 import com.mycompany.sisbibliografico.domain.entities.Revista;
 import com.mycompany.sisbibliografico.domain.repository.RevistaRepository;
-
-import java.util.List; 
+import java.util.List;
 
 public class RevistaServiceImpl implements RevistaService {
 
@@ -15,18 +14,18 @@ public class RevistaServiceImpl implements RevistaService {
     }
 
     @Override
-    public void guardarRevista(Revista revista) {
+    public void crearRevista(Revista revista) {
         revistaRepository.guardar(revista);
     }
 
     @Override
-    public Revista obtenerPorId(int id) {
+    public Revista obtenerRevistaPorId(int id) {
         return revistaRepository.buscarPorId(id);
     }
 
     @Override
-    public List<Revista> listarRevistas() {
-        return revistaRepository.listarTodos();
+    public List<Revista> obtenerTodasLasRevistas() {
+        return revistaRepository.listarTodas();
     }
 
     @Override
@@ -38,4 +37,4 @@ public class RevistaServiceImpl implements RevistaService {
     public void eliminarRevista(int id) {
         revistaRepository.eliminar(id);
     }
-} 
+}

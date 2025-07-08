@@ -4,10 +4,9 @@ import com.mycompany.sisbibliografico.domain.entities.Autor;
 import java.util.List;
 
 public interface AutorService {
-    void guardarAutor(Autor autor);
-    Autor obtenerPorId(int id);
-    List<Autor> listarAutores();
+    void crearAutor(Autor autor);
+    Autor obtenerAutorPorId(int id);
+    List<Autor> obtenerTodosLosAutores();
     void actualizarAutor(Autor autor);
     void eliminarAutor(int id);
 }
-

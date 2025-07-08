@@ -3,7 +3,6 @@ package com.mycompany.sisbibliografico.application.usecase;
 import com.mycompany.sisbibliografico.application.service.AutorService;
 import com.mycompany.sisbibliografico.domain.entities.Autor;
 import com.mycompany.sisbibliografico.domain.repository.AutorRepository;
-
 import java.util.List;
 
 public class AutorServiceImpl implements AutorService {
@@ -15,17 +14,17 @@ public class AutorServiceImpl implements AutorService {
     }
 
     @Override
-    public void guardarAutor(Autor autor) {
+    public void crearAutor(Autor autor) {
         autorRepository.guardar(autor);
     }
 
     @Override
-    public Autor obtenerPorId(int id) {
+    public Autor obtenerAutorPorId(int id) {
         return autorRepository.buscarPorId(id);
     }
 
     @Override
-    public List<Autor> listarAutores() {
+    public List<Autor> obtenerTodosLosAutores() {
         return autorRepository.listarTodos();
     }
 
@@ -38,5 +37,4 @@ public class AutorServiceImpl implements AutorService {
     public void eliminarAutor(int id) {
         autorRepository.eliminar(id);
     }
-} 
-
+}

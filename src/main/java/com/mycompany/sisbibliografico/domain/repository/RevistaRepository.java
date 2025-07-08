@@ -6,7 +6,7 @@ import java.util.List;
 public interface RevistaRepository {
     void guardar(Revista revista);
     Revista buscarPorId(int id);
-    List<Revista> listarTodos();
+    List<Revista> listarTodas();
     void actualizar(Revista revista);
     void eliminar(int id);
 }

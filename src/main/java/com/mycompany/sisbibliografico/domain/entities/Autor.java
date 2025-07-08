@@ -50,4 +50,3 @@ public class Autor {
     public String getNivelColaboracionInternacional() { return nivelColaboracionInternacional; }
     public void setNivelColaboracionInternacional(String nivelColaboracionInternacional) { this.nivelColaboracionInternacional = nivelColaboracionInternacional; }
 }
-

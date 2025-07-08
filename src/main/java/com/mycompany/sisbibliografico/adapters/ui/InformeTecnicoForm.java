@@ -2,148 +2,188 @@ package com.mycompany.sisbibliografico.adapters.ui;
 
 import com.mycompany.sisbibliografico.application.service.InformeTecnicoService;
 import com.mycompany.sisbibliografico.domain.entities.InformeTecnico;
-
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
 public class InformeTecnicoForm extends JPanel {
 
-    private final InformeTecnicoService informeService;
-    private final CardLayout cardLayout;
+    private final InformeTecnicoService informeTecnicoService;
+    private final CardLayout layout;
     private final JPanel contentPanel;
 
-    private JTextField txtCentro, txtMes, txtAnio;
-    private JTable tabla;
-    private DefaultTableModel tableModel;
+    private final DefaultTableModel tableModel;
+    private final JTable table;
+    private final JTextField txtId = new JTextField();
+    private final JTextField txtCentroPublicacion = new JTextField(20);
+    private final JComboBox<String> comboMes;
+    private final JTextField txtAnioPublicacion = new JTextField(10);
 
-    public InformeTecnicoForm(InformeTecnicoService informeService, CardLayout cardLayout, JPanel contentPanel) {
-        this.informeService = informeService;
-        this.cardLayout = cardLayout;
+    public InformeTecnicoForm(InformeTecnicoService informeTecnicoService, CardLayout layout, JPanel contentPanel) {
+        this.informeTecnicoService = informeTecnicoService;
+        this.layout = layout;
         this.contentPanel = contentPanel;
-        inicializarUI();
-    }
 
-    private void inicializarUI() {
-        setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 255));
-        setBorder(new EmptyBorder(20, 30, 20, 30));
+        // Inicializar JComboBox con los meses
+        String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+        comboMes = new JComboBox<>(meses);
 
-        JLabel lblTitulo = new JLabel("Gestión de Informes Técnicos");
-        lblTitulo.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 24));
-        lblTitulo.setForeground(new Color(60, 60, 120));
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(245, 245, 245));
+        setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        JLabel lblTitulo = new JLabel("Gestión de Informes Técnicos", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         add(lblTitulo, BorderLayout.NORTH);
 
-        JPanel formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
-        formPanel.setOpaque(false);
+        JPanel panelCentral = new JPanel(new BorderLayout(20, 0));
+        panelCentral.setOpaque(false);
+        add(panelCentral, BorderLayout.CENTER);
 
-        txtCentro = new JTextField();
-        txtMes = new JTextField();
-        txtAnio = new JTextField();
+        JPanel panelFormulario = new JPanel(new GridBagLayout());
+        panelFormulario.setBackground(new Color(225, 220, 240));
+        panelFormulario.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(8, 5, 8, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0; panelFormulario.add(new JLabel("Centro de Publicación:"), gbc);
+        gbc.gridx = 1; gbc.gridy = 0; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0; panelFormulario.add(txtCentroPublicacion, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1; gbc.fill = GridBagConstraints.NONE; panelFormulario.add(new JLabel("Mes de Publicación:"), gbc);
+        gbc.gridx = 1; gbc.gridy = 1; gbc.fill = GridBagConstraints.HORIZONTAL; panelFormulario.add(comboMes, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; panelFormulario.add(new JLabel("Año de Publicación:"), gbc);
+        gbc.gridx = 1; gbc.gridy = 2; gbc.fill = GridBagConstraints.HORIZONTAL; panelFormulario.add(txtAnioPublicacion, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 3; gbc.weighty = 1.0; panelFormulario.add(new JLabel(), gbc);
+        
+        panelCentral.add(panelFormulario, BorderLayout.WEST);
 
-        formPanel.add(new JLabel("Centro de publicación:")); formPanel.add(txtCentro);
-        formPanel.add(new JLabel("Mes de publicación:")); formPanel.add(txtMes);
-        formPanel.add(new JLabel("Año de publicación:")); formPanel.add(txtAnio);
+        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setOpaque(false);
+        panelTabla.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createEtchedBorder(), "Informes Registrados", TitledBorder.LEFT, TitledBorder.TOP));
+        
+        String[] columnNames = {"ID", "Centro de Publicación", "Mes", "Año"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        panelTabla.add(scrollPane, BorderLayout.CENTER);
+        panelCentral.add(panelTabla, BorderLayout.CENTER);
 
-        add(formPanel, BorderLayout.CENTER);
-
-        JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        botones.setOpaque(false);
-
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        panelBotones.setOpaque(false);
         JButton btnGuardar = new JButton("Guardar");
         JButton btnActualizar = new JButton("Actualizar");
         JButton btnEliminar = new JButton("Eliminar");
-        JButton btnCargar = new JButton("Cargar");
-        JButton btnVolver = new JButton("Volver");
+        JButton btnMostrar = new JButton("Mostrar");
+        JButton btnVolverInicio = new JButton("Volver a Inicio");
+        panelBotones.add(btnGuardar);
+        panelBotones.add(btnActualizar);
+        panelBotones.add(btnEliminar);
+        panelBotones.add(btnMostrar);
+        panelBotones.add(btnVolverInicio);
+        add(panelBotones, BorderLayout.SOUTH);
 
         btnGuardar.addActionListener(e -> guardarInforme());
         btnActualizar.addActionListener(e -> actualizarInforme());
         btnEliminar.addActionListener(e -> eliminarInforme());
-        btnCargar.addActionListener(e -> cargarInformes());
-        btnVolver.addActionListener(e -> cardLayout.show(contentPanel, "inicio"));
-
-        botones.add(btnGuardar);
-        botones.add(btnActualizar);
-        botones.add(btnEliminar);
-        botones.add(btnCargar);
-        botones.add(btnVolver);
-
-        add(botones, BorderLayout.SOUTH);
-
-        tableModel = new DefaultTableModel(new String[]{"ID", "Centro", "Mes", "Año"}, 0);
-        tabla = new JTable(tableModel);
-        tabla.setRowHeight(22);
-
-        tabla.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && tabla.getSelectedRow() != -1) {
-                int fila = tabla.getSelectedRow();
-                txtCentro.setText(tableModel.getValueAt(fila, 1).toString());
-                txtMes.setText(tableModel.getValueAt(fila, 2).toString());
-                txtAnio.setText(tableModel.getValueAt(fila, 3).toString());
+        btnMostrar.addActionListener(e -> actualizarTabla());
+        btnVolverInicio.addActionListener(e -> layout.show(contentPanel, "inicio"));
+        
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                poblarCamposDesdeTabla();
             }
         });
-
-        JScrollPane scroll = new JScrollPane(tabla);
-        scroll.setBorder(BorderFactory.createTitledBorder("Informes Técnicos registrados"));
-        scroll.setPreferredSize(new Dimension(600, 200));
-        add(scroll, BorderLayout.EAST);
+        
+        actualizarTabla();
     }
-
-    private void guardarInforme() {
-        try {
-            InformeTecnico i = new InformeTecnico();
-            i.setCentroPublicacion(txtCentro.getText());
-            i.setMesPublicacion(txtMes.getText());
-            i.setAnioPublicacion(Integer.parseInt(txtAnio.getText()));
-            informeService.guardarInforme(i);
-            cargarInformes();
-            JOptionPane.showMessageDialog(this, "Informe técnico guardado");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
-        }
-    }
-
-    private void actualizarInforme() {
-        int fila = tabla.getSelectedRow();
-        if (fila != -1) {
-            try {
-                InformeTecnico i = new InformeTecnico();
-                i.setIdInforme((int) tableModel.getValueAt(fila, 0));
-                i.setCentroPublicacion(txtCentro.getText());
-                i.setMesPublicacion(txtMes.getText());
-                i.setAnioPublicacion(Integer.parseInt(txtAnio.getText()));
-                informeService.actualizarInforme(i);
-                cargarInformes();
-                JOptionPane.showMessageDialog(this, "Informe actualizado");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error al actualizar: " + e.getMessage());
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecciona un informe primero");
-        }
-    }
-
-    private void eliminarInforme() {
-        int fila = tabla.getSelectedRow();
-        if (fila != -1) {
-            int id = (int) tableModel.getValueAt(fila, 0);
-            informeService.eliminarInforme(id);
-            cargarInformes();
-            JOptionPane.showMessageDialog(this, "Informe eliminado");
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecciona un informe para eliminar");
-        }
-    }
-
-    private void cargarInformes() {
+    
+    private void actualizarTabla() {
         tableModel.setRowCount(0);
-        List<InformeTecnico> informes = informeService.listarInformes();
+        List<InformeTecnico> informes = informeTecnicoService.obtenerTodosLosInformesTecnicos();
         for (InformeTecnico i : informes) {
             tableModel.addRow(new Object[]{i.getIdInforme(), i.getCentroPublicacion(), i.getMesPublicacion(), i.getAnioPublicacion()});
         }
     }
-} 
- 
+
+    private void poblarCamposDesdeTabla() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow != -1) {
+            int informeId = (int) tableModel.getValueAt(selectedRow, 0);
+            InformeTecnico i = informeTecnicoService.obtenerInformeTecnicoPorId(informeId);
+            if (i != null) {
+                txtId.setText(String.valueOf(i.getIdInforme()));
+                txtCentroPublicacion.setText(i.getCentroPublicacion());
+                comboMes.setSelectedItem(i.getMesPublicacion());
+                txtAnioPublicacion.setText(String.valueOf(i.getAnioPublicacion()));
+            }
+        }
+    }
+    
+    private InformeTecnico leerDatosDeFormulario() throws NumberFormatException {
+        InformeTecnico i = new InformeTecnico();
+        if (!txtId.getText().isEmpty()) {
+            i.setIdInforme(Integer.parseInt(txtId.getText()));
+        }
+        i.setCentroPublicacion(txtCentroPublicacion.getText());
+        i.setMesPublicacion((String) comboMes.getSelectedItem());
+        i.setAnioPublicacion(Integer.parseInt(txtAnioPublicacion.getText()));
+        return i;
+    }
+
+    private void guardarInforme() {
+        try {
+            InformeTecnico i = leerDatosDeFormulario();
+            informeTecnicoService.crearInformeTecnico(i);
+            JOptionPane.showMessageDialog(this, "Informe Técnico guardado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            actualizarTabla();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El año de publicación debe ser un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void actualizarInforme() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un informe para actualizar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            InformeTecnico i = leerDatosDeFormulario();
+            informeTecnicoService.actualizarInformeTecnico(i);
+            JOptionPane.showMessageDialog(this, "Informe Técnico actualizado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            actualizarTabla();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El año de publicación debe ser un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void eliminarInforme() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un informe para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar este informe?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                informeTecnicoService.eliminarInformeTecnico(Integer.parseInt(txtId.getText()));
+                JOptionPane.showMessageDialog(this, "Informe Técnico eliminado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                actualizarTabla();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+}

@@ -4,10 +4,9 @@ import com.mycompany.sisbibliografico.domain.entities.InformeTecnico;
 import java.util.List;
 
 public interface InformeTecnicoService {
-    void guardarInforme(InformeTecnico informe);
-    InformeTecnico obtenerPorId(int id);
-    List<InformeTecnico> listarInformes();
-    void actualizarInforme(InformeTecnico informe);
-    void eliminarInforme(int id);
+    void crearInformeTecnico(InformeTecnico informe);
+    InformeTecnico obtenerInformeTecnicoPorId(int id);
+    List<InformeTecnico> obtenerTodosLosInformesTecnicos();
+    void actualizarInformeTecnico(InformeTecnico informe);
+    void eliminarInformeTecnico(int id);
 }
-

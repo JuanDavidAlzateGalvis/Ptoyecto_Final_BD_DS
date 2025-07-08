@@ -10,5 +10,3 @@ public interface InformeTecnicoRepository {
     void actualizar(InformeTecnico informe);
     void eliminar(int id);
 }
-
-

@@ -3,7 +3,6 @@ package com.mycompany.sisbibliografico.application.usecase;
 import com.mycompany.sisbibliografico.application.service.CongresoService;
 import com.mycompany.sisbibliografico.domain.entities.Congreso;
 import com.mycompany.sisbibliografico.domain.repository.CongresoRepository;
-
 import java.util.List;
 
 public class CongresoServiceImpl implements CongresoService {
@@ -15,17 +14,17 @@ public class CongresoServiceImpl implements CongresoService {
     }
 
     @Override
-    public void guardarCongreso(Congreso congreso) {
+    public void crearCongreso(Congreso congreso) {
         congresoRepository.guardar(congreso);
     }
 
     @Override
-    public Congreso obtenerPorId(int id) {
+    public Congreso obtenerCongresoPorId(int id) {
         return congresoRepository.buscarPorId(id);
     }
 
     @Override
-    public List<Congreso> listarCongresos() {
+    public List<Congreso> obtenerTodosLosCongresos() {
         return congresoRepository.listarTodos();
     }
 
@@ -38,5 +37,4 @@ public class CongresoServiceImpl implements CongresoService {
     public void eliminarCongreso(int id) {
         congresoRepository.eliminar(id);
     }
-} 
-
+}

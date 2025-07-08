@@ -4,10 +4,9 @@ import com.mycompany.sisbibliografico.domain.entities.Revista;
 import java.util.List;
 
 public interface RevistaService {
-    void guardarRevista(Revista revista);
-    Revista obtenerPorId(int id);
-    List<Revista> listarRevistas();
+    void crearRevista(Revista revista);
+    Revista obtenerRevistaPorId(int id);
+    List<Revista> obtenerTodasLasRevistas();
     void actualizarRevista(Revista revista);
     void eliminarRevista(int id);
 }
-

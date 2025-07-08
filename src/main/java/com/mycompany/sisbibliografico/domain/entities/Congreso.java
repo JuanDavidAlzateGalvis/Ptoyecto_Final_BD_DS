@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Congreso {
     private int idCongreso;
     private String nombre;
-    private int edicion;
+    private String edicion;
     private String ciudad;
     private String pais;
     private LocalDate fechaInicio;
@@ -14,14 +14,15 @@ public class Congreso {
     private String frecuencia;
     private int anioPrimeraEdicion;
 
+    // Getters y Setters
     public int getIdCongreso() { return idCongreso; }
     public void setIdCongreso(int idCongreso) { this.idCongreso = idCongreso; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public int getEdicion() { return edicion; }
-    public void setEdicion(int edicion) { this.edicion = edicion; }
+    public String getEdicion() { return edicion; }
+    public void setEdicion(String edicion) { this.edicion = edicion; }
 
     public String getCiudad() { return ciudad; }
     public void setCiudad(String ciudad) { this.ciudad = ciudad; }
@@ -44,4 +45,3 @@ public class Congreso {
     public int getAnioPrimeraEdicion() { return anioPrimeraEdicion; }
     public void setAnioPrimeraEdicion(int anioPrimeraEdicion) { this.anioPrimeraEdicion = anioPrimeraEdicion; }
 }
-

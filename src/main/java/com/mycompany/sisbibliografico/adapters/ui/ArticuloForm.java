@@ -2,181 +2,227 @@ package com.mycompany.sisbibliografico.adapters.ui;
 
 import com.mycompany.sisbibliografico.application.service.ArticuloService;
 import com.mycompany.sisbibliografico.domain.entities.Articulo;
-
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
-import java.util.List; 
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class ArticuloForm extends JPanel {
 
     private final ArticuloService articuloService;
-    private final CardLayout cardLayout;
+    private final CardLayout layout;
     private final JPanel contentPanel;
 
-    private JTextField txtTitulo, txtPalabrasClave, txtCorreo, txtUbicacion, txtTipo, txtFecha;
-    private JCheckBox chkDisponible;
-    private JTable tabla;
-    private DefaultTableModel tableModel;
+    private final DefaultTableModel tableModel;
+    private final JTable table;
+    private final JTextField txtId = new JTextField();
+    private final JTextField txtTitulo = new JTextField(20);
+    private final JTextArea areaPalabrasClave = new JTextArea(2, 20); // Tamaño reducido
+    private final JTextField txtCorreo = new JTextField(20);
+    private final JCheckBox chkDisponibilidad = new JCheckBox("Disponible");
+    private final JTextField txtUbicacion = new JTextField(15);
+    private final JTextField txtTipoPublicacion = new JTextField(15);
+    private final JTextField txtFechaPublicacion = new JTextField(10);
 
-    public ArticuloForm(ArticuloService articuloService, CardLayout cardLayout, JPanel contentPanel) {
+    public ArticuloForm(ArticuloService articuloService, CardLayout layout, JPanel contentPanel) {
         this.articuloService = articuloService;
-        this.cardLayout = cardLayout;
+        this.layout = layout;
         this.contentPanel = contentPanel;
-        inicializarUI();
-    }
 
-    private void inicializarUI() {
-        setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 255)); 
-        setBorder(new EmptyBorder(20, 30, 20, 30));
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(245, 245, 245));
+        setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JLabel lblTitulo = new JLabel("Gestión de Artículos");
-        lblTitulo.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 24));
-        lblTitulo.setForeground(new Color(60, 60, 120));
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel lblTitulo = new JLabel("Gestión de Artículos", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         add(lblTitulo, BorderLayout.NORTH);
 
-        JPanel formPanel = new JPanel(new GridLayout(4, 3, 10, 10));
-        formPanel.setOpaque(false);
+        // --- Panel de Formulario (Izquierda) ---
+        JPanel panelFormulario = new JPanel(new GridBagLayout());
+        panelFormulario.setBackground(new Color(225, 220, 240));
+        panelFormulario.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(6, 5, 6, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0; panelFormulario.add(new JLabel("Título:"), gbc);
+        gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0; panelFormulario.add(txtTitulo, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.gridx = 0; gbc.gridy = 1; gbc.anchor = GridBagConstraints.NORTHEAST; panelFormulario.add(new JLabel("Palabras Clave:"), gbc);
+        gbc.anchor = GridBagConstraints.EAST;
+        areaPalabrasClave.setLineWrap(true);
+        areaPalabrasClave.setWrapStyleWord(true);
+        JScrollPane scrollPalabras = new JScrollPane(areaPalabrasClave);
+        gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 0.5; panelFormulario.add(scrollPalabras, gbc);
 
-        txtTitulo = new JTextField();
-        txtPalabrasClave = new JTextField();
-        txtCorreo = new JTextField();
-        txtUbicacion = new JTextField();
-        txtTipo = new JTextField();
-        txtFecha = new JTextField();
-        chkDisponible = new JCheckBox("Disponible");
+        gbc.gridwidth = 1; gbc.weighty = 0;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; panelFormulario.add(new JLabel("Correo Contacto:"), gbc);
+        gbc.gridx = 1; gbc.gridy = 2; gbc.fill = GridBagConstraints.HORIZONTAL; panelFormulario.add(txtCorreo, gbc);
+        
+        gbc.gridx = 2; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; panelFormulario.add(new JLabel("Fecha Publicación:"), gbc);
+        txtFechaPublicacion.setToolTipText("Formato: AAAA-MM-DD");
+        gbc.gridx = 3; gbc.gridy = 2; gbc.fill = GridBagConstraints.HORIZONTAL; panelFormulario.add(txtFechaPublicacion, gbc);
 
-        formPanel.add(new JLabel("Título:"));
-        formPanel.add(txtTitulo);
-        formPanel.add(new JLabel("Palabras clave:"));
-        formPanel.add(txtPalabrasClave);
-        formPanel.add(new JLabel("Correo contacto:"));
-        formPanel.add(txtCorreo);
-        formPanel.add(new JLabel("Ubicación:"));
-        formPanel.add(txtUbicacion);
-        formPanel.add(new JLabel("Tipo de publicación:"));
-        formPanel.add(txtTipo);
-        formPanel.add(new JLabel("Fecha publicación (yyyy-MM-dd):"));
-        formPanel.add(txtFecha);
-        formPanel.add(new JLabel("¿Disponible?:"));
-        formPanel.add(chkDisponible);
+        gbc.gridx = 0; gbc.gridy = 3; gbc.fill = GridBagConstraints.NONE; panelFormulario.add(new JLabel("Ubicación:"), gbc);
+        gbc.gridx = 1; gbc.gridy = 3; gbc.fill = GridBagConstraints.HORIZONTAL; panelFormulario.add(txtUbicacion, gbc);
+        
+        gbc.gridx = 2; gbc.gridy = 3; gbc.fill = GridBagConstraints.NONE; panelFormulario.add(new JLabel("Tipo Publicación:"), gbc);
+        gbc.gridx = 3; gbc.gridy = 3; gbc.fill = GridBagConstraints.HORIZONTAL; panelFormulario.add(txtTipoPublicacion, gbc);
 
-        add(formPanel, BorderLayout.CENTER);
+        chkDisponibilidad.setOpaque(false);
+        gbc.gridx = 1; gbc.gridy = 4; gbc.anchor = GridBagConstraints.WEST; panelFormulario.add(chkDisponibilidad, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 5; gbc.weighty = 1.0; panelFormulario.add(new JLabel(), gbc);
 
-        JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        botones.setOpaque(false);
+        // --- Panel de Tabla (Derecha) ---
+        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setOpaque(false);
+        panelTabla.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Artículos Registrados", TitledBorder.LEFT, TitledBorder.TOP));
+        String[] columnNames = {"ID", "Título", "Tipo", "Fecha Publicación"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        table = new JTable(tableModel);
+        panelTabla.add(new JScrollPane(table), BorderLayout.CENTER);
 
+        // --- JSplitPane para balancear el tamaño ---
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelFormulario, panelTabla);
+        splitPane.setResizeWeight(0.6); // Da el 60% del espacio inicial al formulario
+        splitPane.setOpaque(false);
+        add(splitPane, BorderLayout.CENTER);
+
+        // --- Panel de Botones ---
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        // ... (resto de la lógica de botones y listeners se mantiene igual)
+        panelBotones.setOpaque(false);
         JButton btnGuardar = new JButton("Guardar");
         JButton btnActualizar = new JButton("Actualizar");
         JButton btnEliminar = new JButton("Eliminar");
-        JButton btnCargar = new JButton("Cargar");
-        JButton btnVolver = new JButton("Volver");
+        JButton btnMostrar = new JButton("Mostrar");
+        JButton btnVolverInicio = new JButton("Volver a Inicio");
+        panelBotones.add(btnGuardar);
+        panelBotones.add(btnActualizar);
+        panelBotones.add(btnEliminar);
+        panelBotones.add(btnMostrar);
+        panelBotones.add(btnVolverInicio);
+        add(panelBotones, BorderLayout.SOUTH);
 
         btnGuardar.addActionListener(e -> guardarArticulo());
         btnActualizar.addActionListener(e -> actualizarArticulo());
         btnEliminar.addActionListener(e -> eliminarArticulo());
-        btnCargar.addActionListener(e -> cargarArticulos());
-        btnVolver.addActionListener(e -> cardLayout.show(contentPanel, "inicio"));
-
-        botones.add(btnGuardar);
-        botones.add(btnActualizar);
-        botones.add(btnEliminar);
-        botones.add(btnCargar);
-        botones.add(btnVolver);
-
-        add(botones, BorderLayout.SOUTH);
-
-        tableModel = new DefaultTableModel(new String[]{"ID", "Título", "Palabras clave", "Correo"}, 0);
-        tabla = new JTable(tableModel);
-        tabla.setRowHeight(22);
-
-        tabla.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && tabla.getSelectedRow() != -1) {
-                int fila = tabla.getSelectedRow();
-                txtTitulo.setText(tableModel.getValueAt(fila, 1).toString());
-                txtPalabrasClave.setText(tableModel.getValueAt(fila, 2).toString());
-                txtCorreo.setText(tableModel.getValueAt(fila, 3).toString());
+        btnMostrar.addActionListener(e -> actualizarTabla());
+        btnVolverInicio.addActionListener(e -> layout.show(contentPanel, "inicio"));
+        
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                poblarCamposDesdeTabla();
             }
         });
+        
+        actualizarTabla();
+    }
+    
+    // El resto de los métodos (actualizarTabla, poblarCampos, etc.) no necesitan cambios
+    private void actualizarTabla() {
+        tableModel.setRowCount(0);
+        List<Articulo> articulos = articuloService.obtenerTodosLosArticulos();
+        for (Articulo a : articulos) {
+            Object fecha = a.getFechaPublicacion() != null ? a.getFechaPublicacion() : "N/D";
+            tableModel.addRow(new Object[]{a.getIdArticulo(), a.getTitulo(), a.getTipoPublicacion(), fecha});
+        }
+    }
 
-        JScrollPane scroll = new JScrollPane(tabla);
-        scroll.setBorder(BorderFactory.createTitledBorder("Artículos registrados"));
-        scroll.setPreferredSize(new Dimension(600, 200));
-
-        add(scroll, BorderLayout.EAST);
+    private void poblarCamposDesdeTabla() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow != -1) {
+            int articuloId = (int) tableModel.getValueAt(selectedRow, 0);
+            Articulo a = articuloService.obtenerArticuloPorId(articuloId);
+            if (a != null) {
+                txtId.setText(String.valueOf(a.getIdArticulo()));
+                txtTitulo.setText(a.getTitulo());
+                areaPalabrasClave.setText(a.getPalabrasClave());
+                txtCorreo.setText(a.getCorreoContacto());
+                chkDisponibilidad.setSelected(a.isDisponibilidad());
+                txtUbicacion.setText(a.getUbicacion());
+                txtTipoPublicacion.setText(a.getTipoPublicacion());
+                if(a.getFechaPublicacion() != null) {
+                    txtFechaPublicacion.setText(a.getFechaPublicacion().toString());
+                } else {
+                    txtFechaPublicacion.setText("");
+                }
+            }
+        }
+    }
+    
+    private Articulo leerDatosDeFormulario() throws DateTimeParseException {
+        Articulo a = new Articulo();
+        if (!txtId.getText().isEmpty()) {
+            a.setIdArticulo(Integer.parseInt(txtId.getText()));
+        }
+        a.setTitulo(txtTitulo.getText());
+        a.setPalabrasClave(areaPalabrasClave.getText());
+        a.setCorreoContacto(txtCorreo.getText());
+        a.setDisponibilidad(chkDisponibilidad.isSelected());
+        a.setUbicacion(txtUbicacion.getText());
+        a.setTipoPublicacion(txtTipoPublicacion.getText());
+        if (!txtFechaPublicacion.getText().trim().isEmpty()){
+            a.setFechaPublicacion(LocalDate.parse(txtFechaPublicacion.getText()));
+        } else {
+            a.setFechaPublicacion(null);
+        }
+        return a;
     }
 
     private void guardarArticulo() {
         try {
-            Articulo a = new Articulo();
-            a.setTitulo(txtTitulo.getText());
-            a.setPalabrasClave(txtPalabrasClave.getText());
-            a.setCorreoContacto(txtCorreo.getText());
-            a.setUbicacion(txtUbicacion.getText());
-            a.setTipoPublicacion(txtTipo.getText());
-            a.setDisponibilidad(chkDisponible.isSelected());
-            a.setFechaPublicacion(LocalDate.parse(txtFecha.getText()));
-
-            articuloService.guardarArticulo(a);
-            cargarArticulos();
-            JOptionPane.showMessageDialog(this, "Artículo guardado correctamente");
+            Articulo a = leerDatosDeFormulario();
+            articuloService.crearArticulo(a);
+            JOptionPane.showMessageDialog(this, "Artículo guardado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            actualizarTabla();
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Error en el formato de fecha. Use AAAA-MM-DD.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void actualizarArticulo() {
-        int fila = tabla.getSelectedRow();
-        if (fila != -1) {
-            try {
-                Articulo a = new Articulo();
-                a.setIdArticulo((int) tableModel.getValueAt(fila, 0));
-                a.setTitulo(txtTitulo.getText());
-                a.setPalabrasClave(txtPalabrasClave.getText());
-                a.setCorreoContacto(txtCorreo.getText());
-                a.setUbicacion(txtUbicacion.getText());
-                a.setTipoPublicacion(txtTipo.getText());
-                a.setDisponibilidad(chkDisponible.isSelected());
-                a.setFechaPublicacion(LocalDate.parse(txtFecha.getText()));
-
-                articuloService.actualizarArticulo(a);
-                cargarArticulos();
-                JOptionPane.showMessageDialog(this, "Artículo actualizado");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecciona un artículo primero");
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un artículo para actualizar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            Articulo a = leerDatosDeFormulario();
+            articuloService.actualizarArticulo(a);
+            JOptionPane.showMessageDialog(this, "Artículo actualizado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            actualizarTabla();
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Error en el formato de fecha. Use AAAA-MM-DD.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void eliminarArticulo() {
-        int fila = tabla.getSelectedRow();
-        if (fila != -1) {
-            int id = (int) tableModel.getValueAt(fila, 0);
-            articuloService.eliminarArticulo(id);
-            cargarArticulos();
-            JOptionPane.showMessageDialog(this, "Artículo eliminado");
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecciona un artículo para eliminar");
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un artículo para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar este artículo?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                articuloService.eliminarArticulo(Integer.parseInt(txtId.getText()));
+                JOptionPane.showMessageDialog(this, "Artículo eliminado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                actualizarTabla();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-
-    private void cargarArticulos() {
-        tableModel.setRowCount(0);
-        List<Articulo> articulos = articuloService.listarArticulos();
-        for (Articulo a : articulos) {
-            tableModel.addRow(new Object[]{
-                a.getIdArticulo(),
-                a.getTitulo(),
-                a.getPalabrasClave(),
-                a.getCorreoContacto()
-            });
-        }
-    }
-} 
-
+}

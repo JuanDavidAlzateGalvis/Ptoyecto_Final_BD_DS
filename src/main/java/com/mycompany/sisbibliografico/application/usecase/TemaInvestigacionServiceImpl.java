@@ -3,7 +3,6 @@ package com.mycompany.sisbibliografico.application.usecase;
 import com.mycompany.sisbibliografico.application.service.TemaInvestigacionService;
 import com.mycompany.sisbibliografico.domain.entities.TemaInvestigacion;
 import com.mycompany.sisbibliografico.domain.repository.TemaInvestigacionRepository;
-
 import java.util.List;
 
 public class TemaInvestigacionServiceImpl implements TemaInvestigacionService {
@@ -14,18 +13,18 @@ public class TemaInvestigacionServiceImpl implements TemaInvestigacionService {
         this.temaRepository = temaRepository;
     }
 
-    @Override 
-    public void guardarTema(TemaInvestigacion tema) {
+    @Override
+    public void crearTema(TemaInvestigacion tema) {
         temaRepository.guardar(tema);
     }
 
     @Override
-    public TemaInvestigacion obtenerPorId(int id) {
+    public TemaInvestigacion obtenerTemaPorId(int id) {
         return temaRepository.buscarPorId(id);
     }
 
     @Override
-    public List<TemaInvestigacion> listarTemas() {
+    public List<TemaInvestigacion> obtenerTodosLosTemas() {
         return temaRepository.listarTodos();
     }
 
@@ -38,5 +37,4 @@ public class TemaInvestigacionServiceImpl implements TemaInvestigacionService {
     public void eliminarTema(int id) {
         temaRepository.eliminar(id);
     }
-} 
-
+}

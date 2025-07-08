@@ -10,4 +10,3 @@ public interface ArticuloRepository {
     void actualizar(Articulo articulo);
     void eliminar(int id);
 }
-

@@ -10,4 +10,3 @@ public interface TemaInvestigacionRepository {
     void actualizar(TemaInvestigacion tema);
     void eliminar(int id);
 }
-

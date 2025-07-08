@@ -3,8 +3,7 @@ package com.mycompany.sisbibliografico.application.usecase;
 import com.mycompany.sisbibliografico.application.service.ArticuloService;
 import com.mycompany.sisbibliografico.domain.entities.Articulo;
 import com.mycompany.sisbibliografico.domain.repository.ArticuloRepository;
-
-import java.util.List; 
+import java.util.List;
 
 public class ArticuloServiceImpl implements ArticuloService {
 
@@ -15,17 +14,17 @@ public class ArticuloServiceImpl implements ArticuloService {
     }
 
     @Override
-    public void guardarArticulo(Articulo articulo) {
+    public void crearArticulo(Articulo articulo) {
         articuloRepository.guardar(articulo);
     }
 
     @Override
-    public Articulo obtenerPorId(int id) {
+    public Articulo obtenerArticuloPorId(int id) {
         return articuloRepository.buscarPorId(id);
     }
 
     @Override
-    public List<Articulo> listarArticulos() {
+    public List<Articulo> obtenerTodosLosArticulos() {
         return articuloRepository.listarTodos();
     }
 
@@ -39,4 +38,3 @@ public class ArticuloServiceImpl implements ArticuloService {
         articuloRepository.eliminar(id);
     }
 }
-

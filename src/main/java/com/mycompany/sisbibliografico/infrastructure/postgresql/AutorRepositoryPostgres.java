@@ -2,7 +2,6 @@ package com.mycompany.sisbibliografico.infrastructure.postgresql;
 
 import com.mycompany.sisbibliografico.domain.entities.Autor;
 import com.mycompany.sisbibliografico.domain.repository.AutorRepository;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +12,24 @@ public class AutorRepositoryPostgres implements AutorRepository {
 
     @Override
     public void guardar(Autor autor) {
-        String sql = "INSERT INTO autor (nombre, correo, centro_trabajo, pais_origen, afiliacion_universitaria, experiencia_profesional, grado_academico, colaboraciones_previas, premios_academicos, asociaciones_profesionales, nivel_colaboracion_internacional) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO autor (nombre, correo, centro_trabajo, pais_origen, afiliacion_universitaria, experiencia_profesional, grado_academico, colaboraciones_previas, premios_academicos, asociaciones_profesionales, nivel_colaboracion_internacional) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            setParams(stmt, autor);
+            setAutorParams(stmt, autor);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error al guardar autor: " + e.getMessage());
+            System.err.println("❌ Error al guardar autor: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void actualizar(Autor autor) {
+        String sql = "UPDATE autor SET nombre = ?, correo = ?, centro_trabajo = ?, pais_origen = ?, afiliacion_universitaria = ?, experiencia_profesional = ?, grado_academico = ?, colaboraciones_previas = ?, premios_academicos = ?, asociaciones_profesionales = ?, nivel_colaboracion_internacional = ? WHERE id_autor = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            setAutorParams(stmt, autor);
+            stmt.setInt(12, autor.getIdAutor());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("❌ Error al actualizar autor: " + e.getMessage());
         }
     }
 
@@ -28,10 +38,13 @@ public class AutorRepositoryPostgres implements AutorRepository {
         String sql = "SELECT * FROM autor WHERE id_autor = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return construir(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return construirDesdeResultSet(rs);
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error al buscar autor: " + e.getMessage());
+            System.err.println("❌ Error al buscar autor por ID: " + e.getMessage());
         }
         return null;
     }
@@ -39,26 +52,16 @@ public class AutorRepositoryPostgres implements AutorRepository {
     @Override
     public List<Autor> listarTodos() {
         List<Autor> lista = new ArrayList<>();
-        String sql = "SELECT * FROM autor ORDER BY id_autor";
+        String sql = "SELECT * FROM autor ORDER BY nombre";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) lista.add(construir(rs));
+            while (rs.next()) {
+                lista.add(construirDesdeResultSet(rs));
+            }
         } catch (SQLException e) {
-            System.err.println("Error al listar autores: " + e.getMessage());
+            System.err.println("❌ Error al listar autores: " + e.getMessage());
         }
         return lista;
-    }
-
-    @Override
-    public void actualizar(Autor autor) {
-        String sql = "UPDATE autor SET nombre = ?, correo = ?, centro_trabajo = ?, pais_origen = ?, afiliacion_universitaria = ?, experiencia_profesional = ?, grado_academico = ?, colaboraciones_previas = ?, premios_academicos = ?, asociaciones_profesionales = ?, nivel_colaboracion_internacional = ? WHERE id_autor = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            setParams(stmt, autor);
-            stmt.setInt(12, autor.getIdAutor());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al actualizar autor: " + e.getMessage());
-        }
     }
 
     @Override
@@ -68,11 +71,26 @@ public class AutorRepositoryPostgres implements AutorRepository {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error al eliminar autor: " + e.getMessage());
+            System.err.println("❌ Error al eliminar autor: " + e.getMessage());
         }
     }
+    
+    // Método de ayuda para no repetir código en guardar y actualizar
+    private void setAutorParams(PreparedStatement stmt, Autor autor) throws SQLException {
+        stmt.setString(1, autor.getNombre());
+        stmt.setString(2, autor.getCorreo());
+        stmt.setString(3, autor.getCentroTrabajo());
+        stmt.setString(4, autor.getPaisOrigen());
+        stmt.setString(5, autor.getAfiliacionUniversitaria());
+        stmt.setString(6, autor.getExperienciaProfesional());
+        stmt.setString(7, autor.getGradoAcademico());
+        stmt.setString(8, autor.getColaboracionesPrevias());
+        stmt.setString(9, autor.getPremiosAcademicos());
+        stmt.setString(10, autor.getAsociacionesProfesionales());
+        stmt.setString(11, autor.getNivelColaboracionInternacional());
+    }
 
-    private Autor construir(ResultSet rs) throws SQLException {
+    private Autor construirDesdeResultSet(ResultSet rs) throws SQLException {
         Autor a = new Autor();
         a.setIdAutor(rs.getInt("id_autor"));
         a.setNombre(rs.getString("nombre"));
@@ -88,18 +106,4 @@ public class AutorRepositoryPostgres implements AutorRepository {
         a.setNivelColaboracionInternacional(rs.getString("nivel_colaboracion_internacional"));
         return a;
     }
-
-    private void setParams(PreparedStatement stmt, Autor a) throws SQLException {
-        stmt.setString(1, a.getNombre());
-        stmt.setString(2, a.getCorreo());
-        stmt.setString(3, a.getCentroTrabajo());
-        stmt.setString(4, a.getPaisOrigen());
-        stmt.setString(5, a.getAfiliacionUniversitaria());
-        stmt.setString(6, a.getExperienciaProfesional());
-        stmt.setString(7, a.getGradoAcademico());
-        stmt.setString(8, a.getColaboracionesPrevias());
-        stmt.setString(9, a.getPremiosAcademicos());
-        stmt.setString(10, a.getAsociacionesProfesionales());
-        stmt.setString(11, a.getNivelColaboracionInternacional());
-    }
-} 
+}

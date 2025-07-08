@@ -4,7 +4,7 @@ public class Revista {
     private int idRevista;
     private String nombre;
     private String editor;
-    private int anioInicio;
+    private int anioFundacion;
     private String frecuencia;
     private String temasAbordados;
 
@@ -17,8 +17,8 @@ public class Revista {
     public String getEditor() { return editor; }
     public void setEditor(String editor) { this.editor = editor; }
 
-    public int getAnioInicio() { return anioInicio; }
-    public void setAnioInicio(int anioInicio) { this.anioInicio = anioInicio; }
+    public int getAnioFundacion() { return anioFundacion; }
+    public void setAnioFundacion(int anioFundacion) { this.anioFundacion = anioFundacion; }
 
     public String getFrecuencia() { return frecuencia; }
     public void setFrecuencia(String frecuencia) { this.frecuencia = frecuencia; }
@@ -26,4 +26,3 @@ public class Revista {
     public String getTemasAbordados() { return temasAbordados; }
     public void setTemasAbordados(String temasAbordados) { this.temasAbordados = temasAbordados; }
 }
-

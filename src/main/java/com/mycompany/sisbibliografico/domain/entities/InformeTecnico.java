@@ -6,6 +6,7 @@ public class InformeTecnico {
     private String mesPublicacion;
     private int anioPublicacion;
 
+    // Getters y Setters
     public int getIdInforme() { return idInforme; }
     public void setIdInforme(int idInforme) { this.idInforme = idInforme; }
 
@@ -18,4 +19,3 @@ public class InformeTecnico {
     public int getAnioPublicacion() { return anioPublicacion; }
     public void setAnioPublicacion(int anioPublicacion) { this.anioPublicacion = anioPublicacion; }
 }
-

@@ -4,10 +4,9 @@ import com.mycompany.sisbibliografico.domain.entities.Articulo;
 import java.util.List;
 
 public interface ArticuloService {
-    void guardarArticulo(Articulo articulo);
-    Articulo obtenerPorId(int id);
-    List<Articulo> listarArticulos();
+    void crearArticulo(Articulo articulo);
+    Articulo obtenerArticuloPorId(int id);
+    List<Articulo> obtenerTodosLosArticulos();
     void actualizarArticulo(Articulo articulo);
     void eliminarArticulo(int id);
 }
-

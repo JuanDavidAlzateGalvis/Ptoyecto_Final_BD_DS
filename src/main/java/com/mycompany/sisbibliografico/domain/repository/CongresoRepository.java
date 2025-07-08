@@ -10,4 +10,3 @@ public interface CongresoRepository {
     void actualizar(Congreso congreso);
     void eliminar(int id);
 }
-

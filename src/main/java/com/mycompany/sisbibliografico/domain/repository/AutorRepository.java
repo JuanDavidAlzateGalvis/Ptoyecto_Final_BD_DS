@@ -10,4 +10,3 @@ public interface AutorRepository {
     void actualizar(Autor autor);
     void eliminar(int id);
 }
-
