@@ -21,7 +21,7 @@ public class RevistaForm extends JPanel {
     private final JTextField txtEditor = new JTextField(20);
     private final JTextField txtAnioFundacion = new JTextField(10);
     private final JTextField txtFrecuencia = new JTextField(15);
-    private final JTextArea areaTemasAbordados = new JTextArea(2, 20); // Tamaño reducido
+    private final JTextArea areaTemasAbordados = new JTextArea(2, 20);
 
     public RevistaForm(RevistaService revistaService, CardLayout layout, JPanel contentPanel) {
         this.revistaService = revistaService;
@@ -71,36 +71,44 @@ public class RevistaForm extends JPanel {
         JPanel panelTabla = new JPanel(new BorderLayout());
         panelTabla.setOpaque(false);
         panelTabla.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Revistas Registradas", TitledBorder.LEFT, TitledBorder.TOP));
-        String[] columnNames = {"ID", "Nombre", "Editor", "Año Fundación"};
+        
+        // Columnas definidas según tu solicitud
+        String[] columnNames = {"ID", "Nombre", "Editor", "Año Fundación", "Frecuencia", "Temas Abordados"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
         table = new JTable(tableModel);
         panelCentral.add(new JScrollPane(table), BorderLayout.CENTER);
-
-        // --- Panel de Botones ---
+        
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        // ... (resto de la lógica de botones y listeners se mantiene igual)
         panelBotones.setOpaque(false);
         JButton btnGuardar = new JButton("Guardar");
         JButton btnActualizar = new JButton("Actualizar");
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnMostrar = new JButton("Mostrar");
+        JButton btnConsultas = new JButton("Consultas"); // Botón nuevo
         JButton btnVolverInicio = new JButton("Volver a Inicio");
         panelBotones.add(btnGuardar);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnMostrar);
+        panelBotones.add(btnConsultas);
         panelBotones.add(btnVolverInicio);
         add(panelBotones, BorderLayout.SOUTH);
-
+        
         btnGuardar.addActionListener(e -> guardarRevista());
         btnActualizar.addActionListener(e -> actualizarRevista());
         btnEliminar.addActionListener(e -> eliminarRevista());
         btnMostrar.addActionListener(e -> actualizarTabla());
         btnVolverInicio.addActionListener(e -> layout.show(contentPanel, "inicio"));
         
+        btnConsultas.addActionListener(e -> {
+            Frame owner = (Frame) SwingUtilities.getWindowAncestor(this);
+            RevistaQueryDialog queryDialog = new RevistaQueryDialog(owner, revistaService);
+            queryDialog.setVisible(true);
+        });
+
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
                 poblarCamposDesdeTabla();
@@ -110,12 +118,19 @@ public class RevistaForm extends JPanel {
         actualizarTabla();
     }
     
-    // El resto de los métodos (actualizarTabla, poblarCampos, etc.) no necesitan cambios
     private void actualizarTabla() {
         tableModel.setRowCount(0);
         List<Revista> revistas = revistaService.obtenerTodasLasRevistas();
         for (Revista r : revistas) {
-            tableModel.addRow(new Object[]{r.getIdRevista(), r.getNombre(), r.getEditor(), r.getAnioFundacion()});
+            // Se añaden los datos correspondientes a las columnas definidas
+            tableModel.addRow(new Object[]{
+                r.getIdRevista(),
+                r.getNombre(),
+                r.getEditor(),
+                r.getAnioFundacion(),
+                r.getFrecuencia(),
+                r.getTemasAbordados()
+            });
         }
     }
 

@@ -37,4 +37,22 @@ public class RevistaServiceImpl implements RevistaService {
     public void eliminarRevista(int id) {
         revistaRepository.eliminar(id);
     }
+      @Override
+    public List<Revista> buscarRevistasPorNombre(String nombre) {
+        return revistaRepository.buscarPorNombre(nombre);
+    }
+
+    @Override
+    public List<Revista> buscarRevistasPorEditor(String editor) {
+        return revistaRepository.buscarPorEditor(editor);
+    }
+
+    @Override
+    public List<Revista> buscarRevistasPorFrecuencia(String frecuencia) {
+        return revistaRepository.buscarPorFrecuencia(frecuencia);
+    }
+     @Override
+    public List<Revista> buscarRevistasPorAnioFundacion(int anio) {
+        return revistaRepository.buscarPorAnioFundacion(anio);
+    }
 }

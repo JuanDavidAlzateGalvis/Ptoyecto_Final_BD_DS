@@ -9,4 +9,7 @@ public interface InformeTecnicoService {
     List<InformeTecnico> obtenerTodosLosInformesTecnicos();
     void actualizarInformeTecnico(InformeTecnico informe);
     void eliminarInformeTecnico(int id);
+    List<InformeTecnico> buscarInformesPorCentro(String centro);
+    List<InformeTecnico> buscarInformesPorMes(String mes);
+    List<InformeTecnico> buscarInformesPorAnio(int anio);
 }

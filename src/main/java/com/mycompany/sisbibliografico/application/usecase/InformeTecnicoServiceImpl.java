@@ -37,4 +37,18 @@ public class InformeTecnicoServiceImpl implements InformeTecnicoService {
     public void eliminarInformeTecnico(int id) {
         informeTecnicoRepository.eliminar(id);
     }
+     @Override
+    public List<InformeTecnico> buscarInformesPorCentro(String centro) {
+        return informeTecnicoRepository.buscarPorCentro(centro);
+    }
+
+    @Override
+    public List<InformeTecnico> buscarInformesPorMes(String mes) {
+        return informeTecnicoRepository.buscarPorMes(mes);
+    }
+
+    @Override
+    public List<InformeTecnico> buscarInformesPorAnio(int anio) {
+        return informeTecnicoRepository.buscarPorAnio(anio);
+    }
 }

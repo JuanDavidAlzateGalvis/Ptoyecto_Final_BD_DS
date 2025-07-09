@@ -93,4 +93,49 @@ public class RevistaRepositoryPostgres implements RevistaRepository {
         r.setTemasAbordados(rs.getString("temas_abordados"));
         return r;
     }
+     @Override
+    public List<Revista> buscarPorNombre(String nombre) {
+        return buscarPorCampoDeTexto("nombre", nombre);
+    }
+
+    @Override
+    public List<Revista> buscarPorEditor(String editor) {
+        return buscarPorCampoDeTexto("editor", editor);
+    }
+
+    @Override
+    public List<Revista> buscarPorFrecuencia(String frecuencia) {
+        return buscarPorCampoDeTexto("frecuencia", frecuencia);
+    }
+
+    // Método de ayuda para no repetir código
+    private List<Revista> buscarPorCampoDeTexto(String nombreColumna, String criterio) {
+        List<Revista> revistas = new ArrayList<>();
+        String sql = "SELECT * FROM revista WHERE LOWER(" + nombreColumna + ") LIKE LOWER(?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + criterio + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                revistas.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error en búsqueda genérica de texto para Revista: " + e.getMessage());
+        }
+        return revistas;
+    }
+    @Override
+    public List<Revista> buscarPorAnioFundacion(int anio) {
+        List<Revista> revistas = new ArrayList<>();
+        String sql = "SELECT * FROM revista WHERE anio_fundacion = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, anio);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                revistas.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al buscar por año de fundación: " + e.getMessage());
+        }
+        return revistas;
+    }
 }

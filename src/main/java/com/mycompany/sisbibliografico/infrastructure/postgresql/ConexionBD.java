@@ -8,7 +8,7 @@ public class ConexionBD {
     
     private static final String URL = "jdbc:postgresql://localhost:5432/Sis_bibliografia";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "rey1234";
 
     private static Connection connection;
 

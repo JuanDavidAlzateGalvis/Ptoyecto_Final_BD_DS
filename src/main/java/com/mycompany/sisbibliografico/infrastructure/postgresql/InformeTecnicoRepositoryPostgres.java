@@ -87,4 +87,45 @@ public class InformeTecnicoRepositoryPostgres implements InformeTecnicoRepositor
         informe.setAnioPublicacion(rs.getInt("anio_publicacion"));
         return informe;
     }
+     @Override
+    public List<InformeTecnico> buscarPorCentro(String centro) {
+        return buscarPorCampoDeTexto("centro_publicacion", centro);
+    }
+
+    @Override
+    public List<InformeTecnico> buscarPorMes(String mes) {
+        return buscarPorCampoDeTexto("mes_publicacion", mes);
+    }
+
+    @Override
+    public List<InformeTecnico> buscarPorAnio(int anio) {
+        List<InformeTecnico> informes = new ArrayList<>();
+        String sql = "SELECT * FROM informe_tecnico WHERE anio_publicacion = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, anio);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                informes.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al buscar por año: " + e.getMessage());
+        }
+        return informes;
+    }
+
+    // Método de ayuda para no repetir código
+    private List<InformeTecnico> buscarPorCampoDeTexto(String columna, String criterio) {
+        List<InformeTecnico> informes = new ArrayList<>();
+        String sql = "SELECT * FROM informe_tecnico WHERE LOWER(" + columna + ") LIKE LOWER(?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + criterio + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                informes.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error en búsqueda genérica: " + e.getMessage());
+        }
+        return informes;
+    }
 }

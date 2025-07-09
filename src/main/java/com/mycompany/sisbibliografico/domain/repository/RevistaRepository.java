@@ -9,4 +9,8 @@ public interface RevistaRepository {
     List<Revista> listarTodas();
     void actualizar(Revista revista);
     void eliminar(int id);
+    List<Revista> buscarPorNombre(String nombre);
+    List<Revista> buscarPorEditor(String editor);
+    List<Revista> buscarPorFrecuencia(String frecuencia);
+    List<Revista> buscarPorAnioFundacion(int anio);
 }

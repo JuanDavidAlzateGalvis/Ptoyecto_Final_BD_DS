@@ -26,7 +26,6 @@ public class InformeTecnicoForm extends JPanel {
         this.layout = layout;
         this.contentPanel = contentPanel;
 
-        // Inicializar JComboBox con los meses
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
         comboMes = new JComboBox<>(meses);
 
@@ -65,8 +64,7 @@ public class InformeTecnicoForm extends JPanel {
 
         JPanel panelTabla = new JPanel(new BorderLayout());
         panelTabla.setOpaque(false);
-        panelTabla.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createEtchedBorder(), "Informes Registrados", TitledBorder.LEFT, TitledBorder.TOP));
+        panelTabla.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Informes Registrados", TitledBorder.LEFT, TitledBorder.TOP));
         
         String[] columnNames = {"ID", "Centro de Publicación", "Mes", "Año"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -74,8 +72,7 @@ public class InformeTecnicoForm extends JPanel {
             public boolean isCellEditable(int row, int column) { return false; }
         };
         table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
-        panelTabla.add(scrollPane, BorderLayout.CENTER);
+        panelTabla.add(new JScrollPane(table), BorderLayout.CENTER);
         panelCentral.add(panelTabla, BorderLayout.CENTER);
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
@@ -84,11 +81,13 @@ public class InformeTecnicoForm extends JPanel {
         JButton btnActualizar = new JButton("Actualizar");
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnMostrar = new JButton("Mostrar");
+        JButton btnConsultas = new JButton("Consultas"); // Botón nuevo
         JButton btnVolverInicio = new JButton("Volver a Inicio");
         panelBotones.add(btnGuardar);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnMostrar);
+        panelBotones.add(btnConsultas);
         panelBotones.add(btnVolverInicio);
         add(panelBotones, BorderLayout.SOUTH);
 
@@ -97,6 +96,12 @@ public class InformeTecnicoForm extends JPanel {
         btnEliminar.addActionListener(e -> eliminarInforme());
         btnMostrar.addActionListener(e -> actualizarTabla());
         btnVolverInicio.addActionListener(e -> layout.show(contentPanel, "inicio"));
+        
+        btnConsultas.addActionListener(e -> {
+            Frame owner = (Frame) SwingUtilities.getWindowAncestor(this);
+            InformeTecnicoQueryDialog queryDialog = new InformeTecnicoQueryDialog(owner, informeTecnicoService);
+            queryDialog.setVisible(true);
+        });
         
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {

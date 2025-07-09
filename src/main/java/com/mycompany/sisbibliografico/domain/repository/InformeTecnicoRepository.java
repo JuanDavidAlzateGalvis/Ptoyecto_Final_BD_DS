@@ -9,4 +9,7 @@ public interface InformeTecnicoRepository {
     List<InformeTecnico> listarTodos();
     void actualizar(InformeTecnico informe);
     void eliminar(int id);
+    List<InformeTecnico> buscarPorCentro(String centro);
+    List<InformeTecnico> buscarPorMes(String mes);
+    List<InformeTecnico> buscarPorAnio(int anio);
 }
