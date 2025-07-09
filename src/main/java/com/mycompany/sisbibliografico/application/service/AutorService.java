@@ -9,4 +9,5 @@ public interface AutorService {
     List<Autor> obtenerTodosLosAutores();
     void actualizarAutor(Autor autor);
     void eliminarAutor(int id);
+    List<Autor> buscarAutores(String nombre, String pais, String afiliacion, String grado); 
 }

@@ -37,4 +37,9 @@ public class TemaInvestigacionServiceImpl implements TemaInvestigacionService {
     public void eliminarTema(int id) {
         temaRepository.eliminar(id);
     }
+    
+    @Override
+    public List<TemaInvestigacion> buscarPorNombre(String nombre) {
+        return temaRepository.buscarPorNombre(nombre);
+    }
 }

@@ -9,4 +9,5 @@ public interface CongresoRepository {
     List<Congreso> listarTodos();
     void actualizar(Congreso congreso);
     void eliminar(int id);
+    List<Congreso> buscarCongresos(String nombre, String tipo, String pais, String ciudad);
 }

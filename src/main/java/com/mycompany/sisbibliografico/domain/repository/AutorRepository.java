@@ -9,4 +9,5 @@ public interface AutorRepository {
     List<Autor> listarTodos();
     void actualizar(Autor autor);
     void eliminar(int id);
+    List<Autor> buscarAutores(String nombre, String pais, String afiliacion, String grado);
 }

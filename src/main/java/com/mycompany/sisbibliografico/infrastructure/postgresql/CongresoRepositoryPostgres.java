@@ -105,4 +105,43 @@ public class CongresoRepositoryPostgres implements CongresoRepository {
         c.setAnioPrimeraEdicion(rs.getInt("anio_primera_edicion"));
         return c;
     }
+    
+    public List<Congreso> buscarCongresos(String nombre, String tipo, String pais, String ciudad) {
+        List<Congreso> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM congreso WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            sql.append(" AND lower(nombre) LIKE ?");
+            params.add("%" + nombre.toLowerCase() + "%");
+        }
+        if (tipo != null && !tipo.trim().isEmpty() && !tipo.equalsIgnoreCase("Todos")) {
+            sql.append(" AND tipo = ?");
+            params.add(tipo);
+        }
+        if (pais != null && !pais.trim().isEmpty()) {
+            sql.append(" AND lower(pais) LIKE ?");
+            params.add("%" + pais.toLowerCase() + "%");
+        }
+        if (ciudad != null && !ciudad.trim().isEmpty()) {
+            sql.append(" AND lower(ciudad) LIKE ?");
+            params.add("%" + ciudad.toLowerCase() + "%");
+        }
+
+        sql.append(" ORDER BY fecha_inicio DESC");
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                lista.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al buscar congresos: " + e.getMessage());
+        }
+        return lista;
+    }
 }

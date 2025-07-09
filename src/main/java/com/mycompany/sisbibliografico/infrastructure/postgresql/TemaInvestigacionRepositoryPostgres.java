@@ -81,4 +81,20 @@ public class TemaInvestigacionRepositoryPostgres implements TemaInvestigacionRep
         tema.setNombre(rs.getString("nombre"));
         return tema;
     }
+    
+    public List<TemaInvestigacion> buscarPorNombre(String nombre) {
+        List<TemaInvestigacion> lista = new ArrayList<>();
+        String sql = "SELECT * FROM tema_investigacion WHERE lower(nombre) LIKE ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nombre.toLowerCase() + "%");
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                lista.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al buscar temas por nombre: " + e.getMessage());
+        }
+        return lista;
+    }
 }

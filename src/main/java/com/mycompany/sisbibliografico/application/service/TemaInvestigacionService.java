@@ -9,4 +9,5 @@ public interface TemaInvestigacionService {
     List<TemaInvestigacion> obtenerTodosLosTemas();
     void actualizarTema(TemaInvestigacion tema);
     void eliminarTema(int id);
+    List<TemaInvestigacion> buscarPorNombre(String nombre);
 }

@@ -9,4 +9,5 @@ public interface TemaInvestigacionRepository {
     List<TemaInvestigacion> listarTodos();
     void actualizar(TemaInvestigacion tema);
     void eliminar(int id);
+    List<TemaInvestigacion> buscarPorNombre(String nombre);
 }

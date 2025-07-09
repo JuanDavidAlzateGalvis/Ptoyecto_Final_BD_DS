@@ -37,4 +37,9 @@ public class CongresoServiceImpl implements CongresoService {
     public void eliminarCongreso(int id) {
         congresoRepository.eliminar(id);
     }
+    
+    @Override
+    public List<Congreso> buscarCongresos(String nombre, String tipo, String pais, String ciudad) {
+        return congresoRepository.buscarCongresos(nombre, tipo, pais, ciudad);
+    }
 }

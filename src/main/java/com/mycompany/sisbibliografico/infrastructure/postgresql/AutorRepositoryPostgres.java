@@ -106,4 +106,44 @@ public class AutorRepositoryPostgres implements AutorRepository {
         a.setNivelColaboracionInternacional(rs.getString("nivel_colaboracion_internacional"));
         return a;
     }
+    
+    @Override
+    public List<Autor> buscarAutores(String nombre, String pais, String afiliacion, String grado) {
+        List<Autor> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM autor WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            sql.append(" AND lower(nombre) LIKE ?");
+            params.add("%" + nombre.toLowerCase() + "%");
+        }
+        if (pais != null && !pais.trim().isEmpty()) {
+            sql.append(" AND lower(pais_origen) LIKE ?");
+            params.add("%" + pais.toLowerCase() + "%");
+        }
+        if (afiliacion != null && !afiliacion.trim().isEmpty()) {
+            sql.append(" AND lower(afiliacion_universitaria) LIKE ?");
+            params.add("%" + afiliacion.toLowerCase() + "%");
+        }
+        if (grado != null && !grado.trim().isEmpty()) {
+            sql.append(" AND lower(grado_academico) LIKE ?");
+            params.add("%" + grado.toLowerCase() + "%");
+        }
+
+        sql.append(" ORDER BY nombre");
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                lista.add(construirDesdeResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al buscar autores: " + e.getMessage());
+        }
+        return lista;
+    }
 }

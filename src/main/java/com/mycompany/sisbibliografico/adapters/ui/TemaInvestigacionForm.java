@@ -72,11 +72,14 @@ public class TemaInvestigacionForm extends JPanel {
         JButton btnActualizar = new JButton("Actualizar");
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnMostrar = new JButton("Mostrar");
+        JButton btnConsultar = new JButton("Consultar");
         JButton btnVolverInicio = new JButton("Volver a Inicio");
-        panelBotones.add(btnGuardar);
+        
+        panelBotones.add(btnGuardar); 
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnMostrar);
+        panelBotones.add(btnConsultar);
         panelBotones.add(btnVolverInicio);
         add(panelBotones, BorderLayout.SOUTH);
 
@@ -84,6 +87,10 @@ public class TemaInvestigacionForm extends JPanel {
         btnActualizar.addActionListener(e -> actualizarTema());
         btnEliminar.addActionListener(e -> eliminarTema());
         btnMostrar.addActionListener(e -> actualizarTabla());
+        btnConsultar.addActionListener(e -> {
+            Frame owner = (Frame) SwingUtilities.getWindowAncestor(this);
+            TemaInvestigacionQueryDialog dialog = new TemaInvestigacionQueryDialog(owner, temaService);
+            dialog.setVisible(true); });
         btnVolverInicio.addActionListener(e -> layout.show(contentPanel, "inicio"));
         
         table.getSelectionModel().addListSelectionListener(e -> {

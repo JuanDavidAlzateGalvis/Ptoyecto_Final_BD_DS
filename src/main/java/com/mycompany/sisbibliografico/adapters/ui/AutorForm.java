@@ -114,11 +114,14 @@ public class AutorForm extends JPanel {
         JButton btnActualizar = new JButton("Actualizar");
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnMostrar = new JButton("Mostrar");
+        JButton btnConsultar = new JButton("Consultar");
         JButton btnVolverInicio = new JButton("Volver a Inicio");
+        
         panelBotones.add(btnGuardar);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnMostrar);
+        panelBotones.add(btnConsultar);
         panelBotones.add(btnVolverInicio);
         add(panelBotones, BorderLayout.SOUTH);
 
@@ -126,6 +129,10 @@ public class AutorForm extends JPanel {
         btnActualizar.addActionListener(e -> actualizarAutor());
         btnEliminar.addActionListener(e -> eliminarAutor());
         btnMostrar.addActionListener(e -> actualizarTabla());
+        btnConsultar.addActionListener(e -> {
+            Frame owner = (Frame) SwingUtilities.getWindowAncestor(this);
+            AutorQueryDialog dialog = new AutorQueryDialog(owner, autorService);
+            dialog.setVisible(true); });
         btnVolverInicio.addActionListener(e -> layout.show(contentPanel, "inicio"));
         
         table.getSelectionModel().addListSelectionListener(e -> {

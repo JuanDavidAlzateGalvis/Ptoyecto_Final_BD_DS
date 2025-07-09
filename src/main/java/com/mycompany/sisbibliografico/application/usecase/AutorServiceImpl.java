@@ -37,4 +37,9 @@ public class AutorServiceImpl implements AutorService {
     public void eliminarAutor(int id) {
         autorRepository.eliminar(id);
     }
+    
+    @Override
+    public List<Autor> buscarAutores(String nombre, String pais, String afiliacion, String grado) {
+        return autorRepository.buscarAutores(nombre, pais, afiliacion, grado);
+    }
 }
